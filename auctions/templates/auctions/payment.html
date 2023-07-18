@@ -1,0 +1,12 @@
+{%extends "auctions/layout.html"%}
+
+{%block body%}
+<h2>Payment page</h2>
+
+<h3>Acknowledge Payment for Course : {{course.title}}</h3>
+
+<form action="{%url 'payment' id=course.id%}" method="post">
+    {%csrf_token%}
+    <input type="submit" name="pay" value="Pay" id="pay_price">
+</form>
+{%endblock%}

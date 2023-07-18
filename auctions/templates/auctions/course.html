@@ -1,0 +1,88 @@
+{%extends "auctions/layout.html"%}
+{%block title%}
+{{course.title}}
+{%endblock%}
+{%block body%}
+{% if message %}
+    {% for m in message %}
+        <div class="alert alert-{{ m.tags }}">
+            {{ m }}
+        </div>
+    {% endfor %}
+{% endif %}
+<h2>{{course.title}}</h2>
+{% if user.is_authenticated%}
+        {% if iswatching %}
+            <form action="{% url 'remove' id=course.id %}" method="post">
+                {%csrf_token%}
+                <button type="submit" class="btn btn-danger my-3" id="removeCart">Remove from Watchlist</button>
+            </form>
+        {%else%}
+            <form action="{% url 'add' id=course.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success my-3" id="addCart">Add to Watchlist</button>
+            </form>
+        {%endif%}
+{%endif%}
+<img src="{{course.imageurl}}" alt="{{listing.title}}" width="1200px" height="800px" margin="30px">
+<p>{{course.desc}}</p>
+<h3>Price: ${{course.price}}</h3>
+<div>
+    <h3><strong>What You'll Learn</strong></h3>
+    <ul>
+        {%for m in material%}
+            <li>{{m.topic}}</li>
+        {%endfor%}
+    </ul>
+</div>
+
+{% if user.is_authenticated  %}
+        {%if not bought%}
+            <h3><strong>Pay to Unlock Course Content</strong></h3>
+            <form action="{%url 'checkout' id=course.id %}" method="post">
+                {%csrf_token%}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-warning" id="pay">Pay</button>
+                </div>
+            </form>
+        {%else%}
+            <!-- <h3>Bought this course</h3> -->
+            <br>
+            <div>
+                <h3>Material</h3>
+                <ol>
+                    {%for m in material%}
+                        <li>
+                            <h4>{{m.topic}}</h3>
+                            <a href="{%url 'download_material' topic_name=m.topic %}" class="btn btn-success">Download</a>
+                        </li>
+                    {%endfor%}
+               </ol>
+            </div>
+        {%endif%}
+{%else%}
+        <form action="{% url 'login'%}" method="get">
+            <button type="submit" class="btn btn-primary" id="signin">Sign in</button>
+        </form>
+{%endif%}
+
+<br>
+<h2>Comments</h2>
+{%if user.is_authenticated %}
+    <form action="{% url 'addComment' id=course.id  %}" method="post">
+        {%csrf_token%}
+        <label for="comment">Add Comment</label>
+        <input type="text" name="newComment">
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+{%endif%}
+{% for comment in comments%}
+    <li class="list-group-item">
+        {{comment.message}}
+        <br>
+        <p>Posted by: <strong>{{comment.author}}</strong></p>
+    </li>
+{% empty %}
+    <p>No comments</p>
+{%endfor%}
+{%endblock%}

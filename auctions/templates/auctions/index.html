@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Courses</h2>
+
+    <form action="{%url 'category'%}" method="post" class="my-3">
+        {%csrf_token%}
+        <label for="category">Category</label>
+            <select class="form-select" name="category" id="category">
+                <option selected>Choose category</option>
+                {%for category in categories%}
+                    <option value="{{category.name}}">{{category.name}}</option>
+                {%endfor%}
+            </select>
+        <button type="submit" class="btn btn-warning mx-4">Search Category</button>
+    </form>
+    <div class="row mx-3">
+        {%for course in courses %}
+        <div class="card mx-3" style="width: 18rem;">
+                <img class="card-img-top" src="{{course.imageurl}}" height="200px" alt="{{course.title}}">
+                <div class="card-body">
+                    <h5 class="card-title">{{course.title}}</h5>
+                    <p class="card-text">{{course.desc}}</p>
+                    <a href="{%url 'course' id=course.id%}" class="btn btn-primary" id="course{{course.id}}">Details</a>
+                </div>
+        </div>
+        {%endfor%}
+    </div>
+
+{% endblock %}
